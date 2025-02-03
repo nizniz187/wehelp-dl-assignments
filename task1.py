@@ -5,8 +5,6 @@ import json
 URL = "https://ecshweb.pchome.com.tw/search/v4.3/all/results?cateid=DSAA31"
 OUTPUT_FILE_NAME = 'products.txt'
 
-#====================== Task 1 ======================
-
 print('Task 1 started.')
 
 def get_prod_id_list():
@@ -37,7 +35,3 @@ with open(OUTPUT_FILE_NAME, "w") as file:
       file.write(f'{id}\n')
 
 print(f'Task 1 done. Output file: {OUTPUT_FILE_NAME}.')
-
-#====================== Task 2 ======================
-
-#====================== Task 3 ======================
