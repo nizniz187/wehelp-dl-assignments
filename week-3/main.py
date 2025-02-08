@@ -27,6 +27,3 @@ outputs=nn.forward(0.75, 1.25)
 print(f'input=(0.75, 1.25), outputs={outputs}')
 outputs=nn.forward(-1, 0.5)
 print(f'input=(-1, 0.5), outputs={outputs}')
-
-0.55, 0.25
-0.43
