@@ -22,14 +22,28 @@ class Layer:
     #print(inputs)
     if(self.outputAmt == 0):
       return
-    outputs = []
-    for i in range(self.outputAmt):
-      o = Decimal(0)
-      for j in range(len(inputs)):
-        o += Decimal(self.activationFunction(inputs[j])) * Decimal(self.weights[j][i] if self.weights else 1)
-        #print(o, inputs[j], self.weights[j][i])
-      if(self.type != LayerType.OUTPUT):
+    
+    activatedInputs = self.executeActivationFunction(inputs)
+    if(self.type == LayerType.OUTPUT):
+      return activatedInputs
+    else:
+      outputs = []
+      for i in range(self.outputAmt):
+        o = Decimal(0)
+        for j in range(len(inputs)):
+          o += Decimal(activatedInputs[j]) * Decimal(self.weights[j][i])
+          #print(o, activatedInputs[j], self.weights[j][i])
         o += Decimal(self.bias) * Decimal(self.weights[-1][i])
-      outputs.append(float(o.normalize()))
-    #print(outputs)
-    return outputs
+        #print(o)
+        outputs.append(float(o.normalize()))
+      #print(outputs)
+      return outputs
+  
+  def executeActivationFunction(self, inputs):
+    if(self.activationFunction is ActivationFunction.softmax):
+      return self.activationFunction(inputs)
+    else:
+      outputs = []
+      for i in inputs:
+        outputs.append(self.activationFunction(i))
+      return outputs

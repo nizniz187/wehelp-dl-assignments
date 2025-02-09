@@ -8,6 +8,7 @@ class Network:
     layerInputs = list(inputs)
     for layer in self.layers:
         layerOutputs = layer.calcOutputs(layerInputs)
+        # print(layerOutputs)
         layerInputs = layerOutputs
     return layerOutputs
         
