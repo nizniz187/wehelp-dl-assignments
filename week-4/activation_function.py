@@ -22,6 +22,6 @@ class ActivationFunction:
     maxDiffSum = sum(Decimal(math.exp(x - maxInput)) for x in inputs)
     outputs = []
     for x in inputs:
-      o = Decimal(math.exp(x - float(maxDiffSum))) / maxDiffSum
+      o = Decimal(math.exp(x - maxInput)) / maxDiffSum
       outputs.append(float(o))
     return outputs
