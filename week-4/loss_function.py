@@ -4,7 +4,7 @@ class LossFunction:
   @staticmethod
   def mse(outputs, expects):
     outputAmt = len(outputs)
-    print(outputs, expects)
+    # print(outputs, expects)
     return 1 / outputAmt * sum((expects[i] - outputs[i]) ** 2 for i in range(outputAmt))
   
   @staticmethod
