@@ -48,6 +48,9 @@ class Layer:
         outputs.append(self.activation_function(i))
       return outputs
     
+  def execute_activation_function_prime(self, input):
+    return self.activation_function_prime(input)
+    
   def get_output_size(self, weights, neuron_size):
     if isinstance(weights, list):
       return len(weights[0]) if isinstance(weights[0], list) else 1
@@ -65,11 +68,23 @@ class Layer:
     else:
       return self.weights
     
+  def get_weight(self, index):
+    weights = self.get_weights()
+    return weights[index] if len(weights) != 0 else None
+    
   def get_weight_size(self):
     if self.type == LayerType.OUTPUT:
       return 0
     else:
-      return len(self.weights) * (len(self.weights[0]) if isinstance(self.weights[0], list) else 1)
+      return (self.neuron_size + 1) * self.output_size
+    
+  def get_output_index_by_weight_index(self, index):
+    return index % self.output_size
+  
+  def get_input_by_weight_index(self, index):
+    if self.inputs:
+      input_index = index // self.output_size
+      return self.inputs[input_index] if input_index < len(self.inputs) else self.bias
   
   def set_weights(self, weights):
     if self.type == LayerType.OUTPUT:
@@ -80,6 +95,8 @@ class Layer:
         if(isinstance(self.weights[i], list)):
           for j in range(len(self.weights[i])):
             self.weights[i][j] = weights[index]
+            index += 1
         else:
           self.weights[i] = weights[index]
-        index += 1
+          index += 1
+    # print(weights, self.get_weights())
