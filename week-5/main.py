@@ -19,7 +19,7 @@ nn = Network(
 inputs = [1.5, 0.5]
 expects = [0.8, 1]
 
-nn.execute(inputs, expects, 1000)
+nn.execute(inputs, expects, 0.01, 1000)
 print(f'| inputs={inputs}, outputs={nn.get_outputs()}, expects={expects}')
 print(f'| total loss={nn.get_total_loss()}')
 print(f'| new weights={nn.get_fixed_weights()}')

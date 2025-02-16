@@ -3,13 +3,12 @@ from loss_function import LossFunction
 from layer import LayerType
 
 class Network:
-  def __init__(self, input_layer, hidden_layer, output_layer, loss_function, learning_rate = 0.01):
+  def __init__(self, input_layer, hidden_layer, output_layer, loss_function):
     self.layers = [input_layer, *hidden_layer, output_layer]
     self.loss_function = loss_function
     self.loss_function_prime = LossFunction.get_prime_function(loss_function)
-    self.learning_rate = D(learning_rate)
 
-  def execute(self, inputs, expects, loop_count):
+  def execute(self, inputs, expects, learning_rate, loop_count):
     self.expects = expects
 
     for _ in range(loop_count):
@@ -19,7 +18,7 @@ class Network:
       self.outputs = self.forward(*inputs)
       self.total_loss = self.calc_total_loss(self.outputs, self.expects)
       self.gradients = self.backward(self.expects, self.weights)
-      self.fixed_weights = self.zero_grad(self.weights, self.gradients, self.learning_rate)
+      self.fixed_weights = self.zero_grad(self.weights, self.gradients, learning_rate)
       # print([float(fw) for fw in self.fixed_weights], self.get_weights())
 
   def forward(self, *inputs):
@@ -41,21 +40,24 @@ class Network:
       layer_weight_index = self.get_layer_weight_index(i)
       layer = self.layers[layer_index]
       layer_output_index = layer.get_output_index_by_weight_index(layer_weight_index)
-      input = layer.get_input_by_weight_index(layer_weight_index)
+      input = layer.get_input_by_weight_index(layer_weight_index, hasattr(layer, 'activated_inputs'))
       
-      gradients[i] = self.__calc_gradient(layer_index + 1, layer_output_index, expects) * input # Output -> Weight
-      # print(i, layer_index, layer_weight_index, layer_output_index, input)
-    # print(self.neuron_gradients)
+      gradient = self.__calc_gradient(layer_index + 1, layer_output_index, expects)
+      gradients[i] = gradient * input # Output -> Weight
+      # print(i, layer_index, layer_weight_index, layer_output_index, gradient, input)
+    # print([float(ng) for ng in gradients])
+    # print([float(ng) for ng in self.neuron_gradients[2:]])
     return gradients
     
   def zero_grad(self, weights, gradients, learning_rate):
     fixed_weights = []
     for i in range(len(weights)):
-      fixed_weights.append(weights[i] - learning_rate * gradients[i])
+      fixed_weights.append(weights[i] - D.to_decimal(learning_rate) * gradients[i])
+      # print(i, weights[i], gradients[i], fixed_weights[i])
     return fixed_weights
     # fixed_weights = list(self.weights)
-    # fixed_weights[0] = weights[0] - learning_rate * gradients[0]
-    # fixed_weights[-1] = weights[-1] - learning_rate * gradients[-1]
+    # fixed_weights[0] = weights[0] - D.to_decimal(learning_rate) * gradients[0]
+    # fixed_weights[-1] = weights[-1] - D.to_decimal(learning_rate) * gradients[-1]
     return fixed_weights
   
   def get_outputs(self):
@@ -117,13 +119,17 @@ class Network:
     else:
       for ni in range(layer.output_size):
         g = self.__calc_gradient(layer_index + 1, ni, expects) # Loss -> Next Input
+        # print(layer_index, neuron_index, ni, g)
         g *= layer.get_weight(ni) # Next Input -> Output
+        # print(layer_index, neuron_index, ni, g)
         gradient += g
         # print(layer_index, neuron_index, ni, gradient)
     gradient *= layer.execute_activation_function_prime(layer.inputs[neuron_index]) # Output -> Input
+    # print(layer_index, neuron_index, gradient)
     self.neuron_gradients[network_neuron_index] = gradient
     return gradient
   
+    # gradients = [None] * len(self.weights)
     # gradient1 = self.__execute_loss_function_prime(outputs[0], expects[0])
     # gradient1 *= self.layers[-1].execute_activation_function_prime(self.layers[-1].inputs[0])
     # gradient1 *= self.layers[-2].get_weight(0)

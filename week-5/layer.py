@@ -23,16 +23,16 @@ class Layer:
       return
     
     self.inputs = [D.to_decimal(i) for i in inputs]
-    activated_inputs = self.execute_activation_function(inputs)
+    self.activated_inputs = self.execute_activation_function(inputs)
     if(self.type == LayerType.OUTPUT):
-      self.outputs = activated_inputs
+      self.outputs = self.activated_inputs
     else:
       self.outputs = []
       for i in range(self.output_size):
         o = D.to_decimal(0)
         for j in range(len(self.inputs)):
-          o += activated_inputs[j] * (self.weights[j][i] if isinstance(self.weights[j], list) else self.weights[j])
-          #print(o, activated_inputs[j], self.weights[j][i])
+          o += self.activated_inputs[j] * (self.weights[j][i] if isinstance(self.weights[j], list) else self.weights[j])
+          #print(o, self.activated_inputs[j], self.weights[j][i])
         o += self.bias * (self.weights[-1][i] if isinstance(self.weights[-1], list) else self.weights[-1])
         #print(o)
         self.outputs.append(o.normalize())
@@ -81,10 +81,13 @@ class Layer:
   def get_output_index_by_weight_index(self, index):
     return index % self.output_size
   
-  def get_input_by_weight_index(self, index):
+  def get_input_by_weight_index(self, index, activated=False):
     if self.inputs:
       input_index = index // self.output_size
-      return self.inputs[input_index] if input_index < len(self.inputs) else self.bias
+      if activated:
+        return self.activated_inputs[input_index] if input_index < len(self.inputs) else self.bias
+      else:
+        return self.inputs[input_index] if input_index < len(self.inputs) else self.bias
   
   def set_weights(self, weights):
     if self.type == LayerType.OUTPUT:
