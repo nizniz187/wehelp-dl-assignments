@@ -4,7 +4,6 @@ from activation_function import *
 from loss_function import *
 
 print('Task 1: Neural Network for Regression Tasks')
-print('Task 1-1:')
 
 nn = Network(
   Layer(LayerType.INPUT, 2, 1, [[0.5, 0.6], [0.2, -0.6], [0.3, 0.25]]),
@@ -19,33 +18,45 @@ nn = Network(
 inputs = [1.5, 0.5]
 expects = [0.8, 1]
 
-nn.execute(inputs, expects, 0.01, 1000)
+print('Task 1-1:')
+nn.execute(inputs, expects, 0.01, 1)
 print(f'| inputs={inputs}, outputs={nn.get_outputs()}, expects={expects}')
 print(f'| total loss={nn.get_total_loss()}')
 print(f'| new weights={nn.get_fixed_weights()}')
 
 
+print('Task 1-2:')
+nn.execute(inputs, expects, 0.01, 1000)
+print(f'| inputs={inputs}, outputs={nn.get_outputs()}, expects={expects}')
+print(f'| total loss={nn.get_total_loss()}')
+print(f'| new weights={nn.get_fixed_weights()}')
+
 ####################################################################################################
 
 print()
-print('Neural Network for Binary Classification Tasks:')
+print('Task 2: Neural Network for Binary Classification Tasks:')
 
-# nn = Network(
-#   Layer(LayerType.INPUT, 2, 1, [[0.5, 0.6], [0.2, -0.6], [0.3, 0.25]]),
-#   [
-#     Layer(LayerType.HIDDEN, 2, 1, [[0.8], [0.4], [-0.5]], ActivationFunction.relu)
-#   ],
-#   Layer(LayerType.OUTPUT, 1, None, None, ActivationFunction.sigmoid)
-# )
+nn = Network(
+  Layer(LayerType.INPUT, 2, 1, [[0.5, 0.6], [0.2, -0.6], [0.3, 0.25]]),
+  [
+    Layer(LayerType.HIDDEN, 2, 1, [0.8, 0.4, -0.5], ActivationFunction.relu),
+  ],
+  Layer(LayerType.OUTPUT, 1, 0, None, ActivationFunction.sigmoid),
+  LossFunction.binary_cross_entropy
+)
 
-# inputs=[0.75, 1.25]
-# expects=[1]
-# outputs=nn.forward(*inputs)
-# total_loss = LossFunction.binary_cross_entropy(outputs, expects)
-# print(f'input=({inputs}), outputs={[float(o) for o in outputs]}, expects={expects}, total loss={total_loss}')
+inputs = [0.75, 1.25]
+expects = [1]
 
-# inputs=[-1, 0.5]
-# expects=[0]
-# outputs=nn.forward(*inputs)
-# total_loss = LossFunction.binary_cross_entropy(outputs, expects)
-# print(f'input={inputs}, outputs={[float(o) for o in outputs]}, expects={expects}, total loss={total_loss}')
+print('Task 1-1:')
+nn.execute(inputs, expects, 0.1, 1)
+print(f'| inputs={inputs}, outputs={nn.get_outputs()}, expects={expects}')
+print(f'| total loss={nn.get_total_loss()}')
+print(f'| new weights={nn.get_fixed_weights()}')
+
+
+print('Task 1-2:')
+nn.execute(inputs, expects, 0.1, 1000)
+print(f'| inputs={inputs}, outputs={nn.get_outputs()}, expects={expects}')
+print(f'| total loss={nn.get_total_loss()}')
+print(f'| new weights={nn.get_fixed_weights()}')
